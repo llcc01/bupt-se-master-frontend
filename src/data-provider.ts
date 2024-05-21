@@ -1,5 +1,11 @@
-import { CreateParams, GetListParams } from "react-admin";
-import { createRoom, getRooms } from "./api/room";
+import {
+  CreateParams,
+  GetListParams,
+  GetManyReferenceParams,
+  GetOneParams,
+} from "react-admin";
+import { createRoom, getRoom, getRooms } from "./api/room";
+import { getReport } from "./api/log";
 
 export const dataProvider = {
   getList: (resource: string, params: GetListParams) => {
@@ -12,16 +18,22 @@ export const dataProvider = {
     }
     return Promise.reject("Not implemented");
   },
-  getOne: (resource: string, params: unknown) => {
+  getOne: (resource: string, params: GetOneParams) => {
     console.log("getOne", resource, params);
+    if (resource === "rooms") {
+      return getRoom(params.id);
+    }
     return Promise.reject("Not implemented");
   },
-  getMunknown: (resource: string, params: unknown) => {
-    console.log("getMunknown", resource, params);
+  getMany: (resource: string, params: unknown) => {
+    console.log("getMany", resource, params);
     return Promise.reject("Not implemented");
   },
-  getMunknownReference: (resource: string, params: unknown) => {
-    console.log("getMunknownReference", resource, params);
+  getManyReference: (resource: string, params: GetManyReferenceParams) => {
+    console.log("getManyReference", resource, params);
+    if (resource === "reports") {
+      return getReport(params.id as string, params.filter?.reportType as string);
+    }
     return Promise.reject("Not implemented");
   },
   create: (resource: string, params: CreateParams) => {
@@ -35,8 +47,8 @@ export const dataProvider = {
     console.log("update", resource, params);
     return Promise.reject("Not implemented");
   },
-  updateMunknown: (resource: string, params: unknown) => {
-    console.log("updateMunknown", resource, params);
+  updateMany: (resource: string, params: unknown) => {
+    console.log("updateMany", resource, params);
     return Promise.reject("Not implemented");
   },
   delete: (resource: string, params: unknown) => {

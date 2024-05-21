@@ -32,3 +32,17 @@ export interface ControlLog {
   responseTime?: Date;
   roomId?: number;
 }
+
+/**
+ * Report
+ */
+export interface Report {
+  creator?: string;
+  details?: Array<string>;
+  generationDate?: Date;
+  reportId: number;
+  roomId?: number;
+  totalCost?: number;
+  totalEnergyConsumed?: number;
+  type?: string;
+}

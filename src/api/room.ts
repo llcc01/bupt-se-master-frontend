@@ -13,9 +13,6 @@ export const getRooms = () => {
 export const getRoom = (id: string) => {
   return aGet(`/api/rooms/${id}`).then((res) => {
     const room: Room = res.data.data;
-    console.log({
-      data: { ...room, id: room.roomId },
-    });
     return Promise.resolve({
       data: { ...room, id: room.roomId },
     });
@@ -25,9 +22,6 @@ export const getRoom = (id: string) => {
 export const createRoom = () => {
   return aPost("/api/rooms/create").then((res) => {
     const room: Room = res.data.data;
-    console.log({
-      data: { ...room, id: room.roomId },
-    });
     return Promise.resolve({
       data: { ...room, id: room.roomId },
     });

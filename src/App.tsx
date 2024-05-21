@@ -5,7 +5,7 @@ import chinesesMessages from "@haxqer/ra-language-chinese";
 import { dataProvider } from "./data-provider";
 import { authProvider } from "./auth-provider";
 import { Dashboard } from "./dashboard";
-import { RoomCreate, RoomList } from "./room";
+import { RoomCreate, RoomList, RoomShow } from "./room";
 import { ControlLogList } from "./log";
 
 const i18nProvider = polyglotI18nProvider(() => chinesesMessages, "zh_CN");
@@ -18,7 +18,7 @@ function App() {
       dataProvider={dataProvider}
       authProvider={authProvider}
     >
-      <Resource name="rooms" list={RoomList} create={RoomCreate} />
+      <Resource name="rooms" list={RoomList} create={RoomCreate} show={RoomShow}/>
       <Resource name="controlLogs" list={ControlLogList}/>
     </Admin>
   );

@@ -1,19 +1,31 @@
 import {
+  ArrayField,
   BooleanField,
   Create,
   Datagrid,
   DateField,
+  EditButton,
   FunctionField,
   List,
   NumberField,
+  ReferenceManyCount,
+  ReferenceManyField,
+  ReferenceOneField,
+  ShowButton,
+  ShowContextProvider,
+  ShowView,
   SimpleForm,
+  SimpleShowLayout,
+  TabbedShowLayout,
   TextField,
   TextInput,
+  useShowController,
 } from "react-admin";
 import { Room } from "./type";
+import { Box } from "@mui/material";
 
 export const RoomList = () => (
-  <List>
+  <List pagination={<></>}>
     <Datagrid>
       <NumberField source="roomId" label="房间号" />
       <NumberField
@@ -71,6 +83,9 @@ export const RoomList = () => (
       <NumberField source="energyConsumed" label="消耗" />
       <NumberField source="costAccumulated" label="费用" />
       <NumberField source="unitId" label="中央空调" />
+      <Box sx={{ alignItems: "center", display: "flex" }}>
+        <ShowButton />
+      </Box>
     </Datagrid>
   </List>
 );
@@ -82,5 +97,69 @@ export const RoomCreate = () => {
         <TextInput source="roomId" />
       </SimpleForm>
     </Create>
+  );
+};
+
+const RoomReportDetail = () => {
+  return (
+    <ArrayField source="details">
+      <Datagrid bulkActionButtons={false}>
+        <TextField source="str" />
+      </Datagrid>
+    </ArrayField>
+  );
+};
+
+const RoomReport = () => {
+  return (
+    <SimpleShowLayout>
+      {/* <NumberField source="reportId" label="报告号" /> */}
+      <NumberField source="roomId" label="房间号" />
+      <TextField source="creator" label="创建者" />
+      <TextField source="type" label="类型" />
+      <RoomReportDetail />
+      <DateField source="generationDate" label="生成时间" />
+      <NumberField source="totalCost" label="费用" />
+      <NumberField source="totalEnergyConsumed" label="消耗" />
+    </SimpleShowLayout>
+  );
+};
+
+export const RoomShow = () => {
+  const controllerProps = useShowController();
+  return (
+    <ShowContextProvider value={controllerProps}>
+      <ShowView title={""}>
+        <TabbedShowLayout>
+          <TabbedShowLayout.Tab label="日报">
+            <ReferenceOneField
+              reference="reports"
+              target="roomId"
+              filter={{ reportType: "daily" }}
+            >
+              <RoomReport />
+            </ReferenceOneField>
+          </TabbedShowLayout.Tab>
+          <TabbedShowLayout.Tab label="周报">
+            <ReferenceOneField
+              reference="reports"
+              target="roomId"
+              filter={{ reportType: "weekly" }}
+            >
+              <RoomReport />
+            </ReferenceOneField>
+          </TabbedShowLayout.Tab>
+          <TabbedShowLayout.Tab label="月报">
+            <ReferenceOneField
+              reference="reports"
+              target="roomId"
+              filter={{ reportType: "monthly" }}
+            >
+              <RoomReport />
+            </ReferenceOneField>
+          </TabbedShowLayout.Tab>
+        </TabbedShowLayout>
+      </ShowView>
+    </ShowContextProvider>
   );
 };
