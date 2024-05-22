@@ -1,4 +1,4 @@
-import { Admin, Resource } from "react-admin";
+import { Admin, DataProvider, Resource } from "react-admin";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import chinesesMessages from "@haxqer/ra-language-chinese";
 
@@ -6,7 +6,6 @@ import { dataProvider } from "./data-provider";
 import { authProvider } from "./auth-provider";
 import { Dashboard } from "./dashboard";
 import { RoomCreate, RoomList, RoomShow } from "./room";
-import { ControlLogList } from "./log";
 
 const i18nProvider = polyglotI18nProvider(() => chinesesMessages, "zh_CN");
 
@@ -15,11 +14,11 @@ function App() {
     <Admin
       i18nProvider={i18nProvider}
       dashboard={Dashboard}
-      dataProvider={dataProvider}
+      dataProvider={dataProvider as DataProvider}
       authProvider={authProvider}
     >
       <Resource name="rooms" list={RoomList} create={RoomCreate} show={RoomShow}/>
-      <Resource name="controlLogs" list={ControlLogList}/>
+      {/* <Resource name="controlLogs" list={ControlLogList}/> */}
     </Admin>
   );
 }

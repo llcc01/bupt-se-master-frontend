@@ -1,15 +1,11 @@
 import {
   ArrayField,
-  BooleanField,
   Create,
   Datagrid,
   DateField,
-  EditButton,
   FunctionField,
   List,
   NumberField,
-  ReferenceManyCount,
-  ReferenceManyField,
   ReferenceOneField,
   ShowButton,
   ShowContextProvider,
@@ -21,7 +17,7 @@ import {
   TextInput,
   useShowController,
 } from "react-admin";
-import { Room } from "./type";
+import { ControlLog2, Room } from "./type";
 import { Box } from "@mui/material";
 
 export const RoomList = () => (
@@ -68,7 +64,7 @@ export const RoomList = () => (
             : "自动";
         }}
       />
-      <DateField source="lastUpdate" label="更新时间" />
+      <DateField source="lastUpdate" label="更新时间" showTime />
       <FunctionField
         source="serviceStatus"
         label="服务状态"
@@ -102,9 +98,29 @@ export const RoomCreate = () => {
 
 const RoomReportDetail = () => {
   return (
-    <ArrayField source="details">
+    <ArrayField source="log">
       <Datagrid bulkActionButtons={false}>
-        <TextField source="str" />
+        <NumberField
+          source="actualTemp"
+          label="实际温度(℃)"
+          options={{ minimumFractionDigits: 1 }}
+        />
+        <FunctionField
+          source="requestedFanSpeed"
+          label="请求风速"
+          render={(r: ControlLog2) => {
+            return r.requestedFanSpeed === "low"
+              ? "低"
+              : r.requestedFanSpeed === "medium"
+              ? "中"
+              : r.requestedFanSpeed === "high"
+              ? "高"
+              : "自动";
+          }}
+        />
+        <NumberField source="cost" label="费用" />
+        <DateField source="requestTime" label="请求时间" showTime />
+        <DateField source="endTime" label="结束时间" showTime />
       </Datagrid>
     </ArrayField>
   );
@@ -118,7 +134,7 @@ const RoomReport = () => {
       <TextField source="creator" label="创建者" />
       <TextField source="type" label="类型" />
       <RoomReportDetail />
-      <DateField source="generationDate" label="生成时间" />
+      <DateField source="generationDate" label="生成时间" showTime />
       <NumberField source="totalCost" label="费用" />
       <NumberField source="totalEnergyConsumed" label="消耗" />
     </SimpleShowLayout>

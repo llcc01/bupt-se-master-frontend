@@ -2,6 +2,7 @@
  * Room
  */
 export interface Room {
+  id: number;
   costAccumulated?: number;
   currentTemperature?: number;
   energyConsumed?: number;
@@ -31,6 +32,15 @@ export interface ControlLog {
   requestedTemp?: number;
   responseTime?: Date;
   roomId?: number;
+}
+
+export interface ControlLog2 {
+  actualTemp?: number;
+  cost?: number;
+  endTime?: Date;
+  logId: number;
+  requestTime?: Date;
+  requestedFanSpeed?: string;
 }
 
 /**

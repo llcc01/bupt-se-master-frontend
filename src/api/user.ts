@@ -1,6 +1,6 @@
 import { aPost } from "./api";
 
-export const login = (username: string, password: string, role: string) => {
+export const login = (username: string, password: string) => {
   return aPost("/api/users/login", { username, password, roomId: 101 })
     .then((res) => {
       if (res.data.data?.token) {

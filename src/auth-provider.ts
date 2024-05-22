@@ -3,7 +3,7 @@ import { login } from "./api/user";
 export const authProvider = {
   login: ({ username, password }: { username: string; password: string }) => {
     console.log("login");
-    return login(username, password, "user");
+    return login(username, password);
   },
   logout: () => {
     console.log("logout");
