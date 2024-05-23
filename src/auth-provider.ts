@@ -17,17 +17,21 @@ export const authProvider = {
     console.log("checkAuth");
     return getAcMasterStatus()
       .then(() => {
-        if (
-          localStorage.getItem("userId") &&
-          localStorage.getItem("fullName")
-        ) {
-          return Promise.resolve();
-        }
-        return Promise.reject({ response: { status: 403 } });
+        return Promise.resolve();
+        // if (
+        //   localStorage.getItem("userId") &&
+        //   localStorage.getItem("fullName")
+        // ) {
+        //   return Promise.resolve();
+        // }
+        // return Promise.reject({ response: { status: 403 } });
       })
       .catch((e) => {
+        if (e.response.status === 401) {
+          return Promise.reject("请登录");
+        }
         if (e.response.status === 403) {
-          return Promise.reject("请先登录");
+          return Promise.reject("无权限");
         }
       });
   },
