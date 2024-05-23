@@ -1,3 +1,4 @@
+import { getAcMasterStatus } from "./api/ac";
 import { login } from "./api/user";
 
 export const authProvider = {
@@ -14,14 +15,21 @@ export const authProvider = {
   },
   checkAuth: () => {
     console.log("checkAuth");
-    if (
-      localStorage.getItem("userId") &&
-      localStorage.getItem("fullName") &&
-      localStorage.getItem("token")
-    ) {
-      return Promise.resolve();
-    }
-    return Promise.reject();
+    return getAcMasterStatus()
+      .then(() => {
+        if (
+          localStorage.getItem("userId") &&
+          localStorage.getItem("fullName")
+        ) {
+          return Promise.resolve();
+        }
+        return Promise.reject({ response: { status: 403 } });
+      })
+      .catch((e) => {
+        if (e.response.status === 403) {
+          return Promise.reject("请先登录");
+        }
+      });
   },
   checkError: () => {
     console.log("checkError");

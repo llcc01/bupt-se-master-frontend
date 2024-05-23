@@ -56,3 +56,19 @@ export interface Report {
   totalEnergyConsumed?: number;
   type?: string;
 }
+
+/**
+ * CentralUnit
+ */
+export interface CentralUnit {
+  activeUnits?: number;
+  capacity?: number;
+  currentTemperature?: number;
+  defaultTemperature?: number;
+  frequency: number;
+  maxTemperature?: number;
+  minTemperature?: number;
+  mode?: string;
+  status?: string;
+  unitId: number;
+}

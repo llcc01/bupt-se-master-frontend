@@ -1,10 +1,17 @@
-import { aGet } from "./api";
+import { aGet, aPost } from "./api";
 
 export const turnOnAcMaster = () => {
-  return aGet("/api/unit/on");
+  return aPost("/api/unit/on");
 };
 
 export const turnOffAcMaster = () => {
-  return aGet("/api/unit/off");
+  return aPost("/api/unit/off");
 };
 
+export const getAcMasterStatus = () => {
+  return aGet("/api/unit/CentralUnit");
+}
+
+export const setAcMasterFrequency = (frequency: number) => {
+  return aPost(`/api/unit/frequency?frequency=${frequency}`);
+}

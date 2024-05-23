@@ -7,7 +7,10 @@ import { authProvider } from "./auth-provider";
 import { Dashboard } from "./dashboard";
 import { RoomCreate, RoomList, RoomShow } from "./room";
 
-const i18nProvider = polyglotI18nProvider(() => chinesesMessages, "zh_CN");
+const i18nProvider = polyglotI18nProvider(
+  () => ({ ...chinesesMessages, resources: { rooms: { name: "房间" } } }),
+  "zh_CN"
+);
 
 function App() {
   return (
@@ -17,7 +20,12 @@ function App() {
       dataProvider={dataProvider as DataProvider}
       authProvider={authProvider}
     >
-      <Resource name="rooms" list={RoomList} create={RoomCreate} show={RoomShow}/>
+      <Resource
+        name="rooms"
+        list={RoomList}
+        create={RoomCreate}
+        show={RoomShow}
+      />
       {/* <Resource name="controlLogs" list={ControlLogList}/> */}
     </Admin>
   );
