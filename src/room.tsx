@@ -102,7 +102,12 @@ const RoomReportDetail = () => {
       <Datagrid bulkActionButtons={false}>
         <NumberField
           source="actualTemp"
-          label="实际温度(℃)"
+          label="开始温度(℃)"
+          options={{ minimumFractionDigits: 1 }}
+        />
+        <NumberField
+          source="endTemp"
+          label="结束温度(℃)"
           options={{ minimumFractionDigits: 1 }}
         />
         <FunctionField
@@ -133,10 +138,11 @@ const RoomReport = () => {
       <NumberField source="roomId" label="房间号" />
       <TextField source="creator" label="创建者" />
       <TextField source="type" label="类型" />
-      <RoomReportDetail />
       <DateField source="generationDate" label="生成时间" showTime />
       <NumberField source="totalCost" label="费用" />
       <NumberField source="totalEnergyConsumed" label="消耗" />
+      <NumberField source="usageTime" label="使用次数" />
+      <RoomReportDetail />
     </SimpleShowLayout>
   );
 };
