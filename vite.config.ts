@@ -8,7 +8,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://10.29.48.100:8080",
+        // target: "http://10.29.48.100:8080",
+        target: "http://127.0.0.1:8080",
         // changeOrigin: true, //是否跨域
         // rewrite: (path) => path.replace(/^\/mis/, ""), //因为后端接口有mis前缀，所以不需要替换
         // ws: true,                       //是否代理 websockets

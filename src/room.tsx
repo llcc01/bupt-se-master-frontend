@@ -141,6 +141,8 @@ const RoomReportDetail = () => {
           }}
         />
         <NumberField source="cost" label="费用" />
+        <NumberField source="energyConsumed" label="消耗" />
+        <NumberField source="duration" label="持续时间" />
         <DateField source="requestTime" label="请求时间" showTime />
         <DateField source="endTime" label="结束时间" showTime />
       </Datagrid>

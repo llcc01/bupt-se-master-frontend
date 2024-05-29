@@ -20,11 +20,18 @@ import {
 } from "./api/ac";
 import { Title, useStore } from "react-admin";
 
+const getTimer = () => {
+  return Number(localStorage.getItem("timer"));
+};
+
+const setTimer = (timer: number) => {
+  localStorage.setItem("timer", timer.toString());
+};
+
 const FreqField = (props: { status: any; setStatus: (status: any) => any }) => {
   const [newFreq, setNewFreq] = useState<number>(props.status.frequency);
   const [error, setError] = useState<boolean>(false);
   const [_, setIntervalTime] = useStore<number>("interval");
-  const [timer, setTimer] = useStore("timer");
 
   return (
     <Box display="flex" alignItems="" gap={2} p={2}>
@@ -57,17 +64,18 @@ const FreqField = (props: { status: any; setStatus: (status: any) => any }) => {
             setIntervalTime(res.data.data.frequency);
             console.log("setIntervalTime", res.data.data.frequency);
 
-            if (timer) {
-              console.log("clearInterval", timer);
-              clearInterval(timer);
+            const oldTimer = getTimer();
+            if (oldTimer) {
+              clearInterval(oldTimer);
+              console.log("clearInterval", oldTimer);
             }
-            setTimer(
-              setInterval(() => {
-                getAcMasterStatus().then((res) => {
-                  props.setStatus(res.data.data);
-                });
-              }, res.data.data.frequency * 1000)
-            );
+
+            const newTimer = setInterval(() => {
+              getAcMasterStatus().then((res) => {
+                props.setStatus(res.data.data);
+              });
+            }, res.data.data.frequency * 1000);
+            setTimer(newTimer);
             console.log("setInterval", res.data.data.frequency);
           });
         }}
@@ -88,8 +96,6 @@ export const Dashboard = () => {
 
   const [intervalTime, setIntervalTime] = useStore<number>("interval", 10);
 
-  const [timer, setTimer] = useStore("timer");
-
   useEffect(() => {
     if (loaded.current) {
       return;
@@ -100,21 +106,27 @@ export const Dashboard = () => {
       setIntervalTime(res.data.data.frequency);
     });
 
-    if (timer) {
-      clearInterval(timer);
+    const oldTimer = getTimer();
+    if (oldTimer) {
+      clearInterval(oldTimer);
+      console.log("clearInterval", oldTimer);
     }
-    setTimer(
-      setInterval(() => {
-        getAcMasterStatus().then((res) => {
-          setStatus(res.data.data);
-        });
-      }, intervalTime * 1000)
-    );
 
-    console.log("setInterval", intervalTime);
+    const newTimer = setInterval(() => {
+      getAcMasterStatus().then((res) => {
+        setStatus(res.data.data);
+      });
+    }, intervalTime * 1000);
+    setTimer(newTimer);
+
+    console.log("setInterval", newTimer);
     return () => {
-      clearInterval(timer);
-      console.log("clearInterval", intervalTime);
+      const oldTimer = getTimer();
+      if (oldTimer) {
+        clearInterval(oldTimer);
+        console.log("clearInterval", oldTimer);
+        setTimer(0);
+      }
       loaded.current = false;
     };
   }, []);
