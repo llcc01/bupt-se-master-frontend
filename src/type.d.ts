@@ -65,7 +65,7 @@ export interface CentralUnit {
   capacity?: number;
   currentTemperature?: number;
   defaultTemperature?: number;
-  frequency: number;
+  frequency?: number;
   maxTemperature?: number;
   minTemperature?: number;
   mode?: string;

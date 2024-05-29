@@ -18,16 +18,77 @@ import {
   turnOffAcMaster,
   turnOnAcMaster,
 } from "./api/ac";
-import { Title } from "react-admin";
+import { Title, useStore } from "react-admin";
+
+const FreqField = (props: { status: any; setStatus: (status: any) => any }) => {
+  const [newFreq, setNewFreq] = useState<number>(props.status.frequency);
+  const [error, setError] = useState<boolean>(false);
+  const [_, setIntervalTime] = useStore<number>("interval");
+  const [timer, setTimer] = useStore("timer");
+
+  return (
+    <Box display="flex" alignItems="" gap={2} p={2}>
+      <TextField
+        error={error}
+        helperText={error ? "请输入1-100的整数" : ""}
+        label="更新间隔"
+        defaultValue={props.status?.frequency}
+        disabled={!props.status}
+        type="number"
+        InputProps={{
+          endAdornment: "秒",
+        }}
+        onChange={(e) => {
+          const freq = parseInt(e.target.value);
+          if (freq < 1 || freq > 100) {
+            setError(true);
+          } else {
+            setError(false);
+            setNewFreq(freq);
+          }
+        }}
+      />
+      <Button
+        variant="contained"
+        disabled={newFreq == props.status.frequency}
+        onClick={() => {
+          setAcMasterFrequency(newFreq).then((res) => {
+            props.setStatus?.(res.data.data);
+            setIntervalTime(res.data.data.frequency);
+            console.log("setIntervalTime", res.data.data.frequency);
+
+            if (timer) {
+              console.log("clearInterval", timer);
+              clearInterval(timer);
+            }
+            setTimer(
+              setInterval(() => {
+                getAcMasterStatus().then((res) => {
+                  props.setStatus(res.data.data);
+                });
+              }, res.data.data.frequency * 1000)
+            );
+            console.log("setInterval", res.data.data.frequency);
+          });
+        }}
+      >
+        确认
+      </Button>
+    </Box>
+  );
+};
 
 export const Dashboard = () => {
   const [status, setStatus] = useState<CentralUnit>({
     status: "off",
     unitId: 1,
-    frequency: 1,
   });
 
   const loaded = useRef(false);
+
+  const [intervalTime, setIntervalTime] = useStore<number>("interval", 10);
+
+  const [timer, setTimer] = useStore("timer");
 
   useEffect(() => {
     if (loaded.current) {
@@ -36,48 +97,27 @@ export const Dashboard = () => {
     loaded.current = true;
     getAcMasterStatus().then((res) => {
       setStatus(res.data.data);
+      setIntervalTime(res.data.data.frequency);
     });
-  }, []);
 
-  const FreqField = () => {
-    const [newFreq, setNewFreq] = useState<number>(status?.frequency);
-    const [error, setError] = useState<boolean>(false);
-    return (
-      <Box display="flex" alignItems="" gap={2} p={2}>
-        <TextField
-          error={error}
-          helperText={error ? "请输入1-100的整数" : ""}
-          label="更新间隔"
-          defaultValue={status?.frequency}
-          disabled={!status}
-          type="number"
-          InputProps={{
-            endAdornment: "分",
-          }}
-          onChange={(e) => {
-            const freq = parseInt(e.target.value);
-            if (freq < 1 || freq > 100) {
-              setError(true);
-            } else {
-              setError(false);
-              setNewFreq(freq);
-            }
-          }}
-        />
-        <Button
-          variant="contained"
-          disabled={newFreq == status.frequency}
-          onClick={() => {
-            setAcMasterFrequency(newFreq).then((res) => {
-              setStatus(res.data.data);
-            });
-          }}
-        >
-          确认
-        </Button>
-      </Box>
+    if (timer) {
+      clearInterval(timer);
+    }
+    setTimer(
+      setInterval(() => {
+        getAcMasterStatus().then((res) => {
+          setStatus(res.data.data);
+        });
+      }, intervalTime * 1000)
     );
-  };
+
+    console.log("setInterval", intervalTime);
+    return () => {
+      clearInterval(timer);
+      console.log("clearInterval", intervalTime);
+      loaded.current = false;
+    };
+  }, []);
 
   return (
     <Card>
@@ -88,10 +128,10 @@ export const Dashboard = () => {
           control={
             <Switch
               // title="中央空调"
-              checked={status?.status === "on"}
+              checked={status?.status === "on" || status?.status === "standby"}
               disabled={!status}
               onClick={() => {
-                if (status?.status === "on") {
+                if (status?.status === "on" || status?.status === "standby") {
                   turnOffAcMaster()
                     .then((res) => {
                       setStatus(res.data.data);
@@ -118,7 +158,9 @@ export const Dashboard = () => {
           label="开关"
         />
         <Divider />
-        <FreqField />
+        {status.frequency && (
+          <FreqField status={status} setStatus={setStatus} />
+        )}
         <Divider />
         <List>
           <ListItem>
@@ -132,16 +174,16 @@ export const Dashboard = () => {
                   ? "制冷"
                   : status?.mode === "heating"
                   ? "制热"
-                  : "自动"
+                  : "未知"
               }
             />
           </ListItem>
-          <ListItem>
+          {/* <ListItem>
             <ListItemText
               primary="当前温度"
               secondary={status?.currentTemperature + "℃"}
             />
-          </ListItem>
+          </ListItem> */}
           <ListItem>
             <ListItemText
               primary="默认温度"
@@ -158,6 +200,20 @@ export const Dashboard = () => {
             <ListItemText
               primary="最高温度"
               secondary={status?.maxTemperature + "℃"}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="当前状态"
+              secondary={
+                status?.status === "on"
+                  ? "开"
+                  : status?.status === "off"
+                  ? "关"
+                  : status?.status === "standby"
+                  ? "待机"
+                  : "未知"
+              }
             />
           </ListItem>
         </List>
