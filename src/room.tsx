@@ -22,6 +22,7 @@ import { ControlLog2, Room } from "./type";
 import { Box } from "@mui/material";
 
 export const RoomList = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [intervalTime, _] = useStore<number>("interval", 10);
   return (
     <List
